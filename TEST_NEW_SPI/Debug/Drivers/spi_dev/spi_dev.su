@@ -1,0 +1,6 @@
+stm32f4xx_ll_bus.h:427:22:LL_AHB1_GRP1_EnableClock	8	static
+spi_dev.c:9:6:MX_GPIO_CSS_Init	32	static
+spi_dev.c:29:14:MX_SPI1_Init	80	static
+spi_dev.c:76:14:MX_SPI2_Init	96	static
+spi_dev.c:135:13:SPI_read	16	static
+spi_dev.c:157:6:SPI_write	16	static
