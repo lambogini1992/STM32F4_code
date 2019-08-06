@@ -1,0 +1,8 @@
+stm32f4xx_ll_spi.c:123:13:LL_SPI_DeInit	0	static
+stm32f4xx_ll_spi.c:214:13:LL_SPI_Init	20	static
+stm32f4xx_ll_spi.c:282:6:LL_SPI_StructInit	0	static
+stm32f4xx_ll_spi.c:385:13:LL_I2S_DeInit	0	static
+stm32f4xx_ll_spi.c:400:13:LL_I2S_Init	16	static
+stm32f4xx_ll_spi.c:505:6:LL_I2S_StructInit	0	static
+stm32f4xx_ll_spi.c:527:6:LL_I2S_ConfigPrescaler	0	static
+stm32f4xx_ll_spi.c:553:14:LL_I2S_InitFullDuplex	16	static
