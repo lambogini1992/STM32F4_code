@@ -89,7 +89,7 @@ const char *SPI_read(SPI_TypeDef *SPIx, uint8_t add_reg, uint8_t len_data)
 	for(idx = 0; idx < len_data; idx++)
 	{
 		LL_SPI_TransmitData8(SPIx, DATA_DEFAULT);
-		memcpy(data + idx, LL_SPI_ReceiveData8(SPIx), 1);
+		data[idx] = LL_SPI_ReceiveData8(SPIx);
 		while(!LL_SPI_IsActiveFlag_TXE(SPIx));
 	}
 	DIS_CSS_PIN;
@@ -110,7 +110,7 @@ void SPI_write(SPI_TypeDef *SPIx, uint8_t add_reg, const char *data)
 
 	for(idx = 0; idx < len_data; idx++)
 	{
-		LL_SPI_TransmitData8(SPIx, data + idx);
+		LL_SPI_TransmitData8(SPIx, (uint8_t)data[idx]);
 		while(!LL_SPI_IsActiveFlag_TXE(SPIx));
 	}
 

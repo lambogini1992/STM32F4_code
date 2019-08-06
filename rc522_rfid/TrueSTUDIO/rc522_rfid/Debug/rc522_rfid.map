@@ -204,7 +204,7 @@ Discarded input sections
  .data          0x00000000        0x0 INC_LIB\spi_driver\spi_driver.o
  .bss           0x00000000        0x0 INC_LIB\spi_driver\spi_driver.o
  .text.SPI_read
-                0x00000000       0x44 INC_LIB\spi_driver\spi_driver.o
+                0x00000000       0x40 INC_LIB\spi_driver\spi_driver.o
  .text.SPI_write
                 0x00000000       0x40 INC_LIB\spi_driver\spi_driver.o
  .text          0x00000000        0x0 INC_LIB\uart_driver\uart.o
@@ -676,31 +676,31 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../l
                 0x00000319       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.3.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtn.o
 OUTPUT(rc522_rfid.elf elf32-littlearm)
 
-.debug_line     0x00000000     0x2db1
+.debug_line     0x00000000     0x2df9
  .debug_line    0x00000000       0x7a Application\TrueSTUDIO\startup_stm32f411xe.o
  .debug_line    0x0000007a      0x50a Application\User\main.o
- .debug_line    0x00000584      0x38c Application\User\stm32f4xx_it.o
- .debug_line    0x00000910      0x2ef Drivers\CMSIS\system_stm32f4xx.o
- .debug_line    0x00000bff      0x4c3 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
- .debug_line    0x000010c2      0x595 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_rcc.o
- .debug_line    0x00001657      0x4cd Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_spi.o
- .debug_line    0x00001b24      0x44d Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_usart.o
- .debug_line    0x00001f71      0x56b Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_utils.o
- .debug_line    0x000024dc      0x4b0 INC_LIB\spi_driver\spi_driver.o
- .debug_line    0x0000298c      0x425 INC_LIB\uart_driver\uart.o
+ .debug_line    0x00000584      0x3dc Application\User\stm32f4xx_it.o
+ .debug_line    0x00000960      0x2ef Drivers\CMSIS\system_stm32f4xx.o
+ .debug_line    0x00000c4f      0x4c3 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
+ .debug_line    0x00001112      0x595 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_rcc.o
+ .debug_line    0x000016a7      0x4cd Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_spi.o
+ .debug_line    0x00001b74      0x44d Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_usart.o
+ .debug_line    0x00001fc1      0x56b Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_utils.o
+ .debug_line    0x0000252c      0x4a8 INC_LIB\spi_driver\spi_driver.o
+ .debug_line    0x000029d4      0x425 INC_LIB\uart_driver\uart.o
 
-.debug_info     0x00000000     0xb468
+.debug_info     0x00000000     0xb4ec
  .debug_info    0x00000000       0x79 Application\TrueSTUDIO\startup_stm32f411xe.o
  .debug_info    0x00000079     0x137b Application\User\main.o
- .debug_info    0x000013f4      0xa78 Application\User\stm32f4xx_it.o
- .debug_info    0x00001e6c      0xd51 Drivers\CMSIS\system_stm32f4xx.o
- .debug_info    0x00002bbd     0x12e4 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
- .debug_info    0x00003ea1     0x1113 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_rcc.o
- .debug_info    0x00004fb4     0x11c1 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_spi.o
- .debug_info    0x00006175     0x10be Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_usart.o
- .debug_info    0x00007233     0x1409 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_utils.o
- .debug_info    0x0000863c     0x1884 INC_LIB\spi_driver\spi_driver.o
- .debug_info    0x00009ec0     0x15a8 INC_LIB\uart_driver\uart.o
+ .debug_info    0x000013f4      0xafe Application\User\stm32f4xx_it.o
+ .debug_info    0x00001ef2      0xd51 Drivers\CMSIS\system_stm32f4xx.o
+ .debug_info    0x00002c43     0x12e4 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
+ .debug_info    0x00003f27     0x1113 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_rcc.o
+ .debug_info    0x0000503a     0x11c1 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_spi.o
+ .debug_info    0x000061fb     0x10be Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_usart.o
+ .debug_info    0x000072b9     0x1409 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_utils.o
+ .debug_info    0x000086c2     0x1882 INC_LIB\spi_driver\spi_driver.o
+ .debug_info    0x00009f44     0x15a8 INC_LIB\uart_driver\uart.o
 
 .debug_abbrev   0x00000000     0x1d00
  .debug_abbrev  0x00000000       0x12 Application\TrueSTUDIO\startup_stm32f411xe.o
@@ -752,7 +752,7 @@ OUTPUT(rc522_rfid.elf elf32-littlearm)
  .debug_ranges  0x00000530       0xa8 INC_LIB\spi_driver\spi_driver.o
  .debug_ranges  0x000005d8       0xa0 INC_LIB\uart_driver\uart.o
 
-.debug_loc      0x00000000     0x1d2f
+.debug_loc      0x00000000     0x1d24
  .debug_loc     0x00000000      0x14c Application\User\main.o
  .debug_loc     0x0000014c      0x11c Drivers\CMSIS\system_stm32f4xx.o
  .debug_loc     0x00000268      0x477 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
@@ -760,14 +760,14 @@ OUTPUT(rc522_rfid.elf elf32-littlearm)
  .debug_loc     0x000009d8      0x466 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_spi.o
  .debug_loc     0x00000e3e      0x3ac Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_usart.o
  .debug_loc     0x000011ea      0x669 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_utils.o
- .debug_loc     0x00001853      0x346 INC_LIB\spi_driver\spi_driver.o
- .debug_loc     0x00001b99      0x196 INC_LIB\uart_driver\uart.o
+ .debug_loc     0x00001853      0x33b INC_LIB\spi_driver\spi_driver.o
+ .debug_loc     0x00001b8e      0x196 INC_LIB\uart_driver\uart.o
 
 .debug_str      0x00000000     0x1d50
  .debug_str     0x00000000      0xa04 Application\User\main.o
                                 0xaeb (size before relaxing)
  .debug_str     0x00000a04       0xce Application\User\stm32f4xx_it.o
-                                0x74c (size before relaxing)
+                                0x769 (size before relaxing)
  .debug_str     0x00000ad2       0x5c Drivers\CMSIS\system_stm32f4xx.o
                                 0x7f3 (size before relaxing)
  .debug_str     0x00000b2e      0x1c5 Drivers\STM32F4xx_HAL_Driver\stm32f4xx_ll_gpio.o
