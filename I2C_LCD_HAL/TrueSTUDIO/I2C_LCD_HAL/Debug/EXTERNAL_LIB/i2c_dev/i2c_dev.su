@@ -1,0 +1,2 @@
+i2c_dev.c:12:19:MX_I2C_Init	96	static
+i2c_dev.c:33:6:Error_Handler	0	static
