@@ -1,0 +1,2 @@
+i2c_dev.c:12:6:I2C_init	8	static
+i2c_dev.c:29:6:I2C_send_data	16	static

@@ -1,0 +1,2 @@
+stepper_ctrl.c:11:6:check_count_step	8	static
+stepper_ctrl.c:20:6:rotate_motor	16	static

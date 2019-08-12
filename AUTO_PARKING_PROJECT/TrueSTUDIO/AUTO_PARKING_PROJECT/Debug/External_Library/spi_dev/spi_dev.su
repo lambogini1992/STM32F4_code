@@ -1,0 +1,4 @@
+spi_dev.c:15:6:SPI_INIT_project	8	static
+spi_dev.c:36:9:SPI_send_byte	24	static
+spi_dev.c:46:6:SPI_write_reg	16	static
+spi_dev.c:54:9:SPI_read_reg	16	static

@@ -1,0 +1,2 @@
+door_motor.c:10:6:check_jsw_button	8	static
+door_motor.c:38:6:action_motor	8	static
