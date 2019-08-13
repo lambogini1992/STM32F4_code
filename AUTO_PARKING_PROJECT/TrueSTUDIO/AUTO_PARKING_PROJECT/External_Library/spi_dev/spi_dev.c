@@ -39,7 +39,7 @@ uint8_t SPI_send_byte(uint8_t data)
 	unsigned char readValue[1];
 
 	writeCommand[0] = data;
-	HAL_SPI_TransmitReceive(&hspi_ctrl, (uint8_t*)&writeCommand, (uint8_t*)&readValue, 1, 10);
+	HAL_SPI_TransmitReceive(&hspi_ctrl, (uint8_t*)&writeCommand, (uint8_t*)&readValue, 1, 1000);
 	return readValue[0];
 }
 
@@ -54,9 +54,9 @@ void SPI_write_reg(uint8_t add_reg, uint8_t data)
 uint8_t SPI_read_reg(uint8_t add_reg)
 {
 	uint8_t ret_val;
-
 	ENA_SPI_COM_CTRL;
 	(void)SPI_send_byte(add_reg);
 	ret_val = SPI_send_byte(0x00);
 	DIS_SPI_COM_CTRL;
+	return ret_val;
 }

@@ -32,7 +32,13 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "gpio_dev/gpio_dev.h"
+#include "i2c_dev/i2c_dev.h"
+#include "Auto_Parking/auto_parking.h"
+#include "rc522_rfid/rcc522.h"
+#include "door_motor/door_motor.h"
+#include "lcd_i2c/lcd_i2c.h"
+#include "stepper_motor_ctrl/stepper_ctrl.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

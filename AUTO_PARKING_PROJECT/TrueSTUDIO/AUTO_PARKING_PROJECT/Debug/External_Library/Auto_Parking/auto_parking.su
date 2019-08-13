@@ -1,0 +1,5 @@
+auto_parking.c:28:6:NODE_init_node	0	static
+auto_parking.c:13:6:NODE_init	24	static
+auto_parking.c:37:6:NODE_link	0	static
+auto_parking.c:43:15:NODE_scan_empty	20	static
+auto_parking.c:93:15:NODE_scan_car	48	static

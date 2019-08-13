@@ -51,15 +51,36 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 //static void MX_I2C1_Init(void);
-/* USER CODE BEGIN PFP */
-
+///* USER CODE BEGIN PFP */
+//#ifdef __GNUC__
+// /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+// set to 'Yes') calls __io_putchar() */
+// #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+//#else
+// #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+//#endif /* __GNUC__ */
+//
+// /**
+// * @brief Retargets the C library printf function to the USART.
+// * @param None
+// * @retval None
+// */
+//PUTCHAR_PROTOTYPE
+//{
+// /* Place your implementation of fputc here */
+// /* e.g. write a character to the USART */
+//	lcd_send_data(ch);
+//
+//
+// return ch;
+//}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-
+uint8_t card_id[5];
 /**
   * @brief  The application entry point.
   * @retval int
@@ -67,7 +88,6 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
   
 
@@ -88,19 +108,32 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-//  MX_ADC1_Init();
-//  MX_I2C1_Init();
-//  MX_SPI1_Init();
+  GPIO_Init();
+//  MFRC522_Init();
+  lcd_init();
+
   /* USER CODE BEGIN 2 */
-
+  lcd_goto_XY(1,2);
+  lcd_send_string("Hello");
+  HAL_Delay(1000);
   /* USER CODE END 2 */
-
+  memset(card_id, 0, 5);
+  HAL_Delay(500);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
 
+//	  while(MI_OK != MFRC522_Check(card_id));
+
+	  lcd_goto_XY(1,2);
+	  lcd_send_string("Card ID is:");
+	  lcd_goto_XY(2,1);
+	  printf("%x-%x-%x-%x-%x", card_id[0], card_id[1], card_id[2], card_id[3], card_id[4]);
+	  memset(card_id, 0, 5);
+
+	  HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
