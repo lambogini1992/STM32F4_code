@@ -17,7 +17,7 @@ void check_count_step(GPIO_PinState dir)
     HAL_Delay(50);
 }
 
-void rotate_motor(GPIO_PinState dir, uint32_t step)
+void rotate_motor(GPIO_PinState dir, uint64_t step)
 {
 	uint32_t count;
 	HAL_GPIO_WritePin(STEP_DRIVER_PIN_GPIO_Port, STEP_DRIVER_PIN_Pin, dir);

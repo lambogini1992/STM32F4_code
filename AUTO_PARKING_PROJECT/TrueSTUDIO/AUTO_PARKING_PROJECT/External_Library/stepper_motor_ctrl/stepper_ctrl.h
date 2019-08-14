@@ -16,7 +16,7 @@
 #define ROTATE_ANTI_CLOCKWISE			GPIO_PIN_RESET
 
 void check_count_step(GPIO_PinState dir);
-void rotate_motor(GPIO_PinState dir, uint32_t step);
+void rotate_motor(GPIO_PinState dir, uint64_t step);
 
 
 #endif /* EXTERNAL_LIBRARY_STEPPER_MOTOR_CTRL_STEPPER_CTRL_H_ */

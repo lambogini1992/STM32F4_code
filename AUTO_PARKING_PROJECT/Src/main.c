@@ -89,7 +89,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
-  
+  uint8_t idx;
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -109,9 +109,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   GPIO_Init();
-//  MFRC522_Init();
+  MFRC522_Init();
   lcd_init();
-
+  NODE_init();
   /* USER CODE BEGIN 2 */
   lcd_goto_XY(1,2);
   lcd_send_string("Hello");
@@ -125,17 +125,20 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-//	  while(MI_OK != MFRC522_Check(card_id));
+	  while(MI_OK != MFRC522_Check(card_id));
+//	  NODE_parking_car_proc(card_id);
+	  if(card_id[0] != 0)
+	  {
+		  for(idx = 0; idx < 10; idx++)
+		  {
+			  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+			  HAL_Delay(500);
+		  }
+		  memset(card_id, 0, 5);
+	  }
 
-	  lcd_goto_XY(1,2);
-	  lcd_send_string("Card ID is:");
-	  lcd_goto_XY(2,1);
-	  printf("%x-%x-%x-%x-%x", card_id[0], card_id[1], card_id[2], card_id[3], card_id[4]);
-	  memset(card_id, 0, 5);
-
-	  HAL_Delay(500);
-    /* USER CODE BEGIN 3 */
   }
+    /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
 
