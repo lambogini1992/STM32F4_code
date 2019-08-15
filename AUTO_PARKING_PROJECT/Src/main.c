@@ -51,36 +51,18 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 //static void MX_I2C1_Init(void);
-///* USER CODE BEGIN PFP */
-//#ifdef __GNUC__
-// /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
-// set to 'Yes') calls __io_putchar() */
-// #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-//#else
-// #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-//#endif /* __GNUC__ */
-//
-// /**
-// * @brief Retargets the C library printf function to the USART.
-// * @param None
-// * @retval None
-// */
-//PUTCHAR_PROTOTYPE
-//{
-// /* Place your implementation of fputc here */
-// /* e.g. write a character to the USART */
-//	lcd_send_data(ch);
-//
-//
-// return ch;
-//}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+//uint8_t card_id_arr[5][5];
 uint8_t card_id[5];
+//uint16_t count_park_but;
+//uint16_t count_take_but;
+
+void CHECK_CARD_ID(void);
 /**
   * @brief  The application entry point.
   * @retval int
@@ -89,12 +71,11 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
-  uint8_t idx;
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+//  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -109,39 +90,112 @@ int main(void)
 
   /* Initialize all configured peripherals */
   GPIO_Init();
+  HAL_GPIO_WritePin(RELAY_ODOOR_GPIO_Port, RELAY_ODOOR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_RESET);
   MFRC522_Init();
   lcd_init();
   NODE_init();
   /* USER CODE BEGIN 2 */
   lcd_goto_XY(1,2);
-  lcd_send_string("Hello");
+  lcd_send_string("Start");
   HAL_Delay(1000);
   /* USER CODE END 2 */
-  memset(card_id, 0, 5);
   HAL_Delay(500);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
-	  while(MI_OK != MFRC522_Check(card_id));
-//	  NODE_parking_car_proc(card_id);
-	  if(card_id[0] != 0)
-	  {
-		  for(idx = 0; idx < 10; idx++)
-		  {
-			  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-			  HAL_Delay(500);
-		  }
-		  memset(card_id, 0, 5);
-	  }
-
+	  CHECK_CARD_ID();
+	  HAL_Delay(2000);
+	  action_motor(ACTION_OPEN_DOOR);
+	  action_motor(ACTION_CLOSE_DOOR);
   }
     /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
 
+void CHECK_CARD_ID(void)
+{
+	uint8_t idx;
+	uint8_t mode_sel;
+	NODE_PARKING *tmp_node;
+
+	memset(card_id, 0, CARD_ID_DATA_LEN);
+	while(MI_OK != MFRC522_Check(card_id));
+	if(card_id[0] != 0)
+	{
+		for(idx = 0; idx < 5; idx++)
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+			HAL_Delay(100);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+			HAL_Delay(100);
+		}
+	}
+
+	mode_sel = MODE_PARKING_AUTO;
+	tmp_node = node_base;
+	for(idx = 0; idx < 5; idx++)
+	{
+		if(tmp_node->has_car == true)
+		{
+			if(memcmp(tmp_node->card_id, card_id, CARD_ID_DATA_LEN) == 0)
+			{
+				mode_sel = MODE_TAKING_AUTO;
+				HAL_Delay(100);
+				break;
+			}
+		}
+		tmp_node = tmp_node->next;
+	}
+
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+	HAL_Delay(50);
+
+	switch(mode_sel)
+	{
+		case MODE_PARKING_AUTO:
+			for(idx = 0; idx < 9; idx++)
+			{
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+				HAL_Delay(200);
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+				HAL_Delay(200);
+			}
+			NODE_parking_car_proc(card_id);
+			break;
+
+		case MODE_TAKING_AUTO:
+			for(idx = 0; idx < 2; idx++)
+			{
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+				HAL_Delay(500);
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+				HAL_Delay(500);
+			}
+			HAL_Delay(500);
+			NODE_taking_car_proc(card_id);
+			break;
+
+		default:
+			break;
+	}
+}
+
+//void AUTO_PARK(void)
+//{
+//	NODE_parking_car_proc(card_id);
+//	action_motor(ACTION_OPEN_DOOR);
+//	action_motor(ACTION_CLOSE_DOOR);
+//}
+//
+//void TAKE_CAR(void)
+//{
+//	NODE_taking_car_proc(card_id);
+//	action_motor(ACTION_OPEN_DOOR);
+//	action_motor(ACTION_CLOSE_DOOR);
+//}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -154,12 +208,13 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -177,6 +232,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
   PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)

@@ -11,8 +11,8 @@
 #include "stm32f1xx_hal.h"
 #include "../gpio_dev/gpio_dev.h"
 
-#define ACTION_OPEN_DOOR		1
-#define ACTION_CLOSE_DOOR		0
+#define ACTION_OPEN_DOOR		0
+#define ACTION_CLOSE_DOOR		1
 
 #define SW_IS_ATTACK			GPIO_PIN_SET
 #define SW_IS_RELEASE			GPIO_PIN_RESET

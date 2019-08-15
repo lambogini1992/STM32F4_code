@@ -7,6 +7,7 @@ void GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, STEP_DRIVER_PIN_Pin|DIR_DRIVER_PIN_Pin|NSS_PIN_RC522_Pin, GPIO_PIN_SET);

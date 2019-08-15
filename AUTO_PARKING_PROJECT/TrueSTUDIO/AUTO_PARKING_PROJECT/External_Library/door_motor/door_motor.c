@@ -41,26 +41,15 @@ void action_motor(uint8_t action)
 	HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_RESET);
 	if(ACTION_OPEN_DOOR == action)
 	{
-		while(1)
-		{
-			if(true == check_jsw_button(action))
-			{
-				break;
-			}
-			HAL_GPIO_WritePin(RELAY_ODOOR_GPIO_Port, RELAY_ODOOR_Pin, GPIO_PIN_SET);
-		}
-		HAL_GPIO_WritePin(RELAY_ODOOR_GPIO_Port, RELAY_ODOOR_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_SET);
+		HAL_Delay(2500);
 	}
 	else if(ACTION_CLOSE_DOOR == action)
 	{
-		while(1)
-		{
-			if(true == check_jsw_button(action))
-			{
-				break;
-			}
-			HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_SET);
-		}
-		HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(RELAY_ODOOR_GPIO_Port, RELAY_ODOOR_Pin, GPIO_PIN_SET);
+		HAL_Delay(2500);
 	}
+	HAL_GPIO_WritePin(RELAY_ODOOR_GPIO_Port, RELAY_ODOOR_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(RELAY_CDOOR_GPIO_Port, RELAY_CDOOR_Pin, GPIO_PIN_RESET);
+	HAL_Delay(1000);
 }

@@ -16,7 +16,8 @@ int main(void)
 
   while (1)
   {
-
+	  lcd_goto_XY(1,2);
+	  lcd_send_string("HEllo");
   }
   /* USER CODE END 3 */
 }

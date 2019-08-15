@@ -43,7 +43,10 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+#define MODE_INIT				0
+#define MODE_PARKING_AUTO		1
+#define MODE_TAKING_AUTO		2
+#define MODE_MANUAL				3
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
