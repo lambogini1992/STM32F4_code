@@ -34,8 +34,6 @@
 #define RELAY_CDOOR_GPIO_Port 		GPIOB
 #define COLOR_SS_OUT_Pin 			GPIO_PIN_14
 #define COLOR_SS_OUT_GPIO_Port 		GPIOB
-#define COLOR_SS_S3_Pin 			GPIO_PIN_15
-#define COLOR_SS_S3_GPIO_Port 		GPIOB
 #define COLOR_SS_S2_Pin 			GPIO_PIN_8
 #define COLOR_SS_S2_GPIO_Port 		GPIOA
 #define COLOR_SS_S1_Pin 			GPIO_PIN_9
@@ -48,7 +46,8 @@
 #define TAKE_BT_GPIO_Port 			GPIOA
 #define LED_STATUS_Pin 				GPIO_PIN_5
 #define LED_STATUS_GPIO_Port 		GPIOB
-
+#define BUZZ_Pin					GPIO_PIN_7
+#define BUZZ_GPIO_Port 				GPIOB
 /*Function PIN*/
 void GPIO_Init(void);
 
