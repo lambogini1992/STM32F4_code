@@ -1,0 +1,7 @@
+main.c:17:9:FLASH_saving_1byte_data	48	static
+main.c:89:9:FLASH_saving_2byte_data	48	static
+main.c:161:9:FLASH_saving_4byte_data	48	static
+main.c:219:10:FLASH_read_data	8	static
+main.c:313:6:SystemClock_Config	72	static
+main.c:231:5:main	48	static
+main.c:379:6:Error_Handler	0	static
