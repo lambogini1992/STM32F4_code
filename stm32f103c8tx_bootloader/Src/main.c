@@ -1,58 +1,6 @@
 #include <stdbool.h>
 #include "main.h"
-#include "flash_handle.h"
-
-#define APPLICATION_ADDRESS_PRO				0x8000000
-
-#define DATA_FILE_RECORD_LEN_POS			0x00
-#define DATA_FILE_ADD_POS					0x01
-#define DATA_FILE_RECODE_TYPE_POS			0x03
-#define DATA_FILE_DATA_POS					0x04
-
-#define RECORD_FILE_DATA 					0x00 //data record
-#define RECORD_FILE_END_FILE				0x01 //  end-of-file record
-#define RECORD_FILE_EXT_SEG_ADD		 		0x02  // extended segment address record
-#define RECORD_FILE_EXT_LIN_ADD				0x04  //  extended linear address record
-#define RECORD_FILE_START_LINEAR_ADD		0x05  // start linear address record
-
-typedef void (*pFunction)(void);
-
-/*  Data format of Intel Hex for each line
- *  Start code   Byte count   Address   Record type   Data   Checksum
- *    1 byte(:)     1 byte    2 byte      1 byte     depend   1 byte
- *                                                  on value
- *                                                of Byte count
- * */
-
-typedef struct _raw_data_recieve_
-{
-	char raw_data_str[52]; //raw data in string type
-	uint8_t raw_data_hex[25]; //raw data in hex type
-	uint8_t len_raw_data;
-	uint8_t crc_val;   //checksum of data
-}RAW_DATA_RECIEVE;
-/*This is struct to saving data after this is handled*/
-typedef struct _data_recieve_complete_
-{
-	uint32_t address_w; 		//address start for programming
-	uint32_t address_last_prog; //this will indicate data of
-	uint8_t  data_len;  		//length of data will be written
-	uint8_t  data[32*1024];      //data will be written
-}DATA_RECIEVE_COMPL;
-
-typedef struct _data_prog_flash
-{
-	uint32_t start_add_prog; // start add program
-	uint8_t	 *data_prog; 	 // data program
-	uint16_t data_len;		 // length of program's data
-}DATA_PROG_FLASH;
-/* USER CODE END Includes */
-DATA_RECIEVE_COMPL DATA_FLASH;
-
-uint32_t no_page_data; //number of data's pages
-/*true: is accept jump to application
- *false: is not accept*/
-bool st_boot;
+#include "boot_proc.h"
 
 UART_HandleTypeDef huart1;
 
@@ -68,13 +16,7 @@ static void MX_USART1_UART_Init(void);
 /* Exported types ------------------------------------------------------------*/
 void UART_Trasnmit_Str(char *str);
 /* USER CODE BEGIN ET */
-bool checksum_data(RAW_DATA_RECIEVE data);
-void jump_to_app(uint32_t add_msp_app);
-uint8_t handle_raw_data(RAW_DATA_RECIEVE data_raw_rec, DATA_RECIEVE_COMPL *data);
-bool convert_str_hex_raw(RAW_DATA_RECIEVE data);
-bool write_data_to_flash(DATA_RECIEVE_COMPL *data);
-bool check_all_data(DATA_RECIEVE_COMPL *data);
-uint8_t merge_compl_data(DATA_PROG_FLASH *data_prog, DATA_RECIEVE_COMPL *data_compl);
+
 /* USER CODE BEGIN PD */
 
 int boot_main(void)
@@ -216,210 +158,13 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 /*This function is handle jump to application process*/
-void jump_to_app(uint32_t add_msp_app)
+void UART_Trasnmit_Str(char *str)
 {
-	pFunction appEntry;
-	uint32_t main_stack;
-	/*Disable all IRQs in system*/
-	__disable_irq();
-
-	main_stack = (uint32_t) *((__IO uint32_t*)add_msp_app);
-	appEntry   = (pFunction) *(__IO uint32_t*) (add_msp_app + 4);
-
-    SCB->VTOR = add_msp_app;
-
-    /* Set the application stack pointer */
-    __set_MSP(main_stack);
-
-    appEntry();
-
-}
-
-/*This function is used to convert data from string to hex file*/
-bool convert_str_hex_raw(RAW_DATA_RECIEVE data)
-{
-	char buff[200];
-	uint8_t i;
-	i = 0;
-	while(data.raw_data_str[i] != 0)
+	while(*str == NULL)
 	{
-		switch(data.raw_data_str[i])
-		{
-			case '0':
-				buff[i] = 0x00;
-				break;
-			case '1':
-				buff[i] = 0x01;
-				break;
-			case '2':
-				buff[i] = 0x02;
-				break;
-			case '3':
-				buff[i] = 0x03;
-				break;
-			case '4':
-				buff[i] = 0x04;
-				break;
-			case '5':
-				buff[i] = 0x05;
-				break;
-			case '6':
-				buff[i] = 0x06;
-				break;
-			case '7':
-				buff[i] = 0x07;
-				break;
-			case '8':
-				buff[i] = 0x08;
-				break;
-			case '9':
-				buff[i] = 0x09;
-				break;
-			case 'a':
-				buff[i] = 0x0A;
-				break;
-			case 'A':
-				buff[i] = 0x0A;
-				break;
-			case 'b':
-				buff[i] = 0x0B;
-				break;
-			case 'B':
-				buff[i] = 0x0B;
-				break;
-			case 'c':
-				buff[i] = 0x0C;
-				break;
-			case 'C':
-				buff[i] = 0x0C;
-				break;
-			case 'd':
-				buff[i] = 0x0D;
-				break;
-			case 'D':
-				buff[i] = 0x0D;
-				break;
-			case 'e':
-				buff[i] = 0x0E;
-				break;
-			case 'E':
-				buff[i] = 0x0E;
-				break;
-			case 'f':
-				buff[i] = 0x0F;
-				break;
-			case 'F':
-				buff[i] = 0x0F;
-				break;
-			default:
-				return false;
-		}
-		i++;
+		HAL_UART_Transmit_IT(&huart1, *str, 1);
+		str++;
 	}
-	memset(data.raw_data_hex, 0, 25);
-	/*check length data is odd or even*/
-	if((i % 2) != 0)
-	{
-		return false;
-	}
-
-	i = (i - 1)/2;
-	/* Because last data is value of crc and we have another variable for saving this data
-	 * So we can remove this data late after handle*/
-	data.len_raw_data = i;
-	while(i >= 0)
-	{
-		data.raw_data_hex[i] = ((uint8_t)(buff[i*2] << 4) & 0xF0) | ((uint8_t)(buff[i*2  + 1] << 4) & 0x0F);
-		i--;
-	}
-
-	data.crc_val = data.raw_data_hex[data.len_raw_data];
-	data.raw_data_hex[data.len_raw_data] = 0x00;
-
-	return true;
-}
-
-/* This function is used to check crc of data is valid or not
- * Return value:
- *      		- false: the received data is invalid
- *      		- true : the received data is valid
- **/
-bool checksum_data(RAW_DATA_RECIEVE data)
-{
-	uint32_t sum_data;/*Summary of all data in *.hex file except crc value and start code*/
-	uint8_t crc;      /*this is crc value, we get from check real data*/
-	uint8_t idx;
-
-	sum_data = 0;
-
-	for(idx = 0; idx < data.len_raw_data; idx++)
-	{
-		sum_data = sum_data + data.raw_data_hex[idx];
-	}
-
-	sum_data = ~sum_data;
-
-	crc = ((uint8_t)sum_data) + 0x01;
-
-	if(crc == data.crc_val)
-	{
-		return true;
-	}
-	return false;
-}
-
-/* This function is used to hanlde raw data to prepare data
-* Return value:
-*      		- 0 : the received data is invalid
-*      		- 1 : the received data is valid
-*      		- 2 : the received data is not handled
-**/
-uint8_t handle_raw_data(RAW_DATA_RECIEVE data_raw_rec, DATA_RECIEVE_COMPL *data)
-{
-	uint8_t idx;
-	data->data_len  = data->data_len + data_raw_rec.raw_data_hex[DATA_FILE_RECORD_LEN_POS];
-
-	data->address_w = ((((uint16_t)data_raw_rec.raw_data_hex[DATA_FILE_ADD_POS]) << 8) & 0xFF00) | \
-			(((uint16_t)data_raw_rec.raw_data_hex[DATA_FILE_ADD_POS + 1]) & 0x00FF);
-
-	switch(data_raw_rec.raw_data_hex[DATA_FILE_RECODE_TYPE_POS])
-	{
-		case RECORD_FILE_DATA:
-			for(idx = 0; idx < data->data_len; idx++)
-			{
-				data->data[idx] = data_raw_rec.raw_data_hex[DATA_FILE_DATA_POS + idx];
-			}
-			break;
-
-		case RECORD_FILE_END_FILE:
-			return 2;
-			break;
-
-		case RECORD_FILE_EXT_LIN_ADD:
-			return 2;
-			break;
-
-		case RECORD_FILE_EXT_SEG_ADD:
-			return 2;
-			break;
-
-		case RECORD_FILE_START_LINEAR_ADD:
-			return 2;
-			break;
-
-		default:
-			return 0;
-			break;
-	}
-	return 1;
-}
-
-bool write_data_to_flash(DATA_RECIEVE_COMPL *data)
-{
-//	uint8_t i;
-//	FLASH_PageErase(data->address_w);
-//	HAL_FLASHEx_Erase()
-
 }
 /* USER CODE END 4 */
 

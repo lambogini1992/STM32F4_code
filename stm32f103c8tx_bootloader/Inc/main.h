@@ -33,6 +33,11 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+/* USER CODE END Includes */
+#define APPLICATION_ADDRESS_PRO				0x8000000
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

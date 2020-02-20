@@ -1,4 +1,0 @@
-flash_hanle.c:10:9:FLASH_saving_1byte_data	48	static
-flash_hanle.c:82:9:FLASH_saving_2byte_data	48	static
-flash_hanle.c:154:9:FLASH_saving_4byte_data	48	static
-flash_hanle.c:212:10:FLASH_read_data	8	static

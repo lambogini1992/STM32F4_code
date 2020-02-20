@@ -15,29 +15,29 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   5 .data         0000000c  20000000  08009020  00010000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .bss          0000006c  2000000c  0800902c  0001000c  2**2
+  6 .bss          00000078  2000000c  0800902c  0001000c  2**2
                   ALLOC
-  7 ._user_heap_stack 00000600  20000078  0800902c  00010078  2**0
+  7 ._user_heap_stack 00000600  20000084  0800902c  00010084  2**0
                   ALLOC
   8 .ARM.attributes 00000029  00000000  00000000  0001000c  2**0
                   CONTENTS, READONLY
-  9 .debug_line   00002f3a  00000000  00000000  00010035  2**0
+  9 .debug_line   00003920  00000000  00000000  00010035  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_info   000067df  00000000  00000000  00012f6f  2**0
+ 10 .debug_info   0000b8d6  00000000  00000000  00013955  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_abbrev 00001726  00000000  00000000  0001974e  2**0
+ 11 .debug_abbrev 00001c5c  00000000  00000000  0001f22b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_aranges 00000558  00000000  00000000  0001ae78  2**3
+ 12 .debug_aranges 00000558  00000000  00000000  00020e88  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 000006c8  00000000  00000000  0001b3d0  2**3
+ 13 .debug_ranges 000006c8  00000000  00000000  000213e0  2**3
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_loc    000028fb  00000000  00000000  0001ba98  2**0
+ 14 .debug_loc    00002906  00000000  00000000  00021aa8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    00001f00  00000000  00000000  0001e393  2**0
+ 15 .debug_str    000022fc  00000000  00000000  000243ae  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  00020293  2**0
+ 16 .comment      0000007c  00000000  00000000  000266aa  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  00000d5c  00000000  00000000  00020310  2**2
+ 17 .debug_frame  00000d68  00000000  00000000  00026728  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -149,7 +149,7 @@ LoopFillZerobss:
   ldr r2, =_sbss
  800818c:	2000000c 	.word	0x2000000c
   ldr r3, = _ebss
- 8008190:	20000078 	.word	0x20000078
+ 8008190:	20000084 	.word	0x20000084
 
 08008194 <ADC1_2_IRQHandler>:
  * @retval : None
@@ -751,7 +751,7 @@ __weak void HAL_IncTick(void)
  8008442:	6013      	str	r3, [r2, #0]
  8008444:	4770      	bx	lr
  8008446:	bf00      	nop
- 8008448:	20000074 	.word	0x20000074
+ 8008448:	20000080 	.word	0x20000080
  800844c:	20000004 	.word	0x20000004
 
 08008450 <HAL_GetTick>:
@@ -766,7 +766,7 @@ __weak uint32_t HAL_GetTick(void)
 }
  8008454:	4770      	bx	lr
  8008456:	bf00      	nop
- 8008458:	20000074 	.word	0x20000074
+ 8008458:	20000080 	.word	0x20000080
 
 0800845c <HAL_NVIC_SetPriorityGrouping>:
 __STATIC_INLINE void __NVIC_SetPriorityGrouping(uint32_t PriorityGroup)
