@@ -29,12 +29,12 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
-
+#include "boot_proc.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-#define APPLICATION_ADDRESS_PRO				0x8000000
+//#define APPLICATION_ADDRESS_PRO				0x8000000
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 

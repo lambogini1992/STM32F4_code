@@ -1,13 +1,24 @@
 #include <stdbool.h>
 #include "main.h"
-#include "boot_proc.h"
+
+
+#define DATA_END_LINE_UART_COUNT		4
+#define DATA_END_LINE_UART				0xFF
 
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
-
+typedef struct _data_uart_app_
+{
+	uint8_t data_uart;
+	uint8_t data_end_count;
+	uint16_t data_count;
+	uint8_t data_colectt[DATA_FILE_RAW_DATA_LEN + 4];
+}DATA_UART_APP;
+DATA_FILE data_prog;
+DATA_UART_APP uart_app;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -45,10 +56,17 @@ int boot_main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+
+  data_prog.add_flash = 0;
+  data_prog.data_len  = 0;
+  uart_app.data_count = 0;
+  uart_app.data_end_count = 0;
+  memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT(&huart1, &uart_app.data_uart, 1);
   /* USER CODE END 2 */
-
+  BOOT_erase(APPLICATION_ADDRESS_PRO, APPLICATION_FLASH_LEN);
+  UART_Trasnmit_Str("OK");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -60,6 +78,41 @@ int boot_main(void)
   /* USER CODE END 3 */
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == huart1.Instance)
+	{
+		if(uart_app.data_uart == DATA_END_LINE_UART)
+		{
+			uart_app.data_end_count++;
+			if(uart_app.data_end_count == DATA_END_LINE_UART_COUNT)
+			{
+				uart_app.data_count = 0;
+				if(BOOT_check_data(uart_app.data_colectt) == BOOT_PROCESS_SUCCESS)
+				{
+					BOOT_handle_data(uart_app.data_colectt, &data_prog);
+					BOOT_flash_prog(data_prog);
+					data_prog.add_flash = 0;
+					data_prog.data_len  = 0;
+					uart_app.data_count = 0;
+					uart_app.data_end_count = 0;
+					memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
+				}
+				else
+				{
+					UART_Trasnmit_Str("FAIL");
+					uart_app.data_count = 0;
+					uart_app.data_end_count = 0;
+					memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
+				}
+			}
+			else
+			{
+
+			}
+		}
+	}
+}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -160,9 +213,9 @@ static void MX_GPIO_Init(void)
 /*This function is handle jump to application process*/
 void UART_Trasnmit_Str(char *str)
 {
-	while(*str == NULL)
+	while((*str) == 0)
 	{
-		HAL_UART_Transmit_IT(&huart1, *str, 1);
+		HAL_UART_Transmit_IT(&huart1, (uint8_t *)str, 1);
 		str++;
 	}
 }

@@ -8,6 +8,7 @@
 #include "boot_proc.h"
 
 typedef void (*pFunction)(void);
+//static DATA_FILE data_prog;
 
 void BOOT_jump_app(uint32_t add)
 {
@@ -40,10 +41,12 @@ uint8_t BOOT_handle_data(uint8_t *raw_data, DATA_FILE *data_prog)
 {
 	uint8_t idx;
 
-	data_prog->add_flash = (((uint32_t)raw_data[DATA_FILE_ADD_POS] << 24) & 0xFF000000) | (((uint32_t)raw_data[DATA_FILE_ADD_POS + 1] << 16) & 0x00FF0000) |\
-			 (((uint32_t)raw_data[DATA_FILE_ADD_POS + 2] << 8) & 0x0000FF00) | ((uint32_t)raw_data[DATA_FILE_ADD_POS + 3] & 0x000000FF);
+	data_prog->add_flash = (((uint16_t)raw_data[DATA_FILE_ADD_POS + 2] << 8) & 0x0000FF00) | \
+			((uint16_t)raw_data[DATA_FILE_ADD_POS + 3] & 0x000000FF);
 
 	data_prog->data_len = raw_data[DATA_FILE_LEN_POS];
+
+	data_prog->data     = (uint8_t *)malloc(data_prog->data_len);
 
 	for(idx = 0; idx < data_prog->data_len; idx++)
 	{
@@ -57,8 +60,9 @@ uint8_t BOOT_flash_prog(DATA_FILE data)
 {
 	uint8_t ret_val;
 
-	ret_val = FLASH_saving_1byte_data(data.add_flash, data.data, data.data_len);
-
+	ret_val = FLASH_saving_1byte_data(APPLICATION_ADDRESS_PRO + (uint32_t)data.add_flash, \
+			data.data, data.data_len);
+	free(data.data);
 	return ret_val;
 }
 

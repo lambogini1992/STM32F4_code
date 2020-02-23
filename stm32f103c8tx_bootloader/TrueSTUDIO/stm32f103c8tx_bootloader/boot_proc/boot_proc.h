@@ -14,19 +14,19 @@
 #define APPLICATION_ADDRESS_PRO				0x8000000
 #define APPLICATION_FLASH_LEN				0x8000
 
-/* address flash	data length		data file			checksum data
- *  4 byte			 1 byte	        256 byte				2 byte
+/* address flash	data length		data file			checksum data     end line
+ *  4 byte			 1 byte	        256 byte				2 byte         4byte
  *  							(max length data)
  *  This format use *.bin file and this will modify data
  *  Checksum data is value from address flash and data file
  * */
 
 #define DATA_FILE_ADD_POS					0x000
-#define DATA_FILE_LEN_POS					0x004
-#define DATA_FILE_DATA_POS					0x005
-#define DATA_FILE_CHECKSUM_POS				0x104
-#define DATA_FILE_RAW_DATA_LEN				0x107
-#define DATA_FILE_LEN_BEFORE_DATA_POS		0x005
+#define DATA_FILE_LEN_POS					0x002
+#define DATA_FILE_DATA_POS					0x003
+#define DATA_FILE_CHECKSUM_POS				0x102
+#define DATA_FILE_RAW_DATA_LEN				0x105
+#define DATA_FILE_LEN_BEFORE_DATA_POS		0x003
 
 
 #define DATA_FILE_FACTOR_CHECKSUM			0xFFFE
@@ -37,7 +37,7 @@
 
 typedef struct _data_file_
 {
-	uint32_t add_flash;
+	uint16_t add_flash;
 	uint8_t  data_len;
 	uint8_t  *data;
 }DATA_FILE;
