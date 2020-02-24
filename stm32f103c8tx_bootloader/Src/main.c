@@ -1,9 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "main.h"
 
 
 #define DATA_END_LINE_UART_COUNT		4
 #define DATA_END_LINE_UART				0xFF
+
+
+//typedef enum _data_line_status_
+//{
+//	DATA_IS_COMPLETE_FOR_LINE ,
+//	DATA_IS_NOT_COMPLETE
+//}DATA_LINE_STATUS;
 
 UART_HandleTypeDef huart1;
 
@@ -12,20 +22,26 @@ UART_HandleTypeDef huart1;
 /* USER CODE END PV */
 typedef struct _data_uart_app_
 {
-	uint8_t data_uart;
+  bool data_prog_flag;
 	uint8_t data_end_count;
 	uint16_t data_count;
 	uint8_t data_colectt[DATA_FILE_RAW_DATA_LEN + 4];
 }DATA_UART_APP;
+
 DATA_FILE data_prog;
+
 DATA_UART_APP uart_app;
+
+uint8_t data_uart;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 /* Exported types ------------------------------------------------------------*/
-void UART_Trasnmit_Str(char *str);
+HAL_StatusTypeDef UART_Trasnmit_Str(char *str);
+void UART_handle_revice_data(uint8_t data_chr);
+
 /* USER CODE BEGIN ET */
 
 /* USER CODE BEGIN PD */
@@ -59,11 +75,12 @@ int boot_main(void)
 
   data_prog.add_flash = 0;
   data_prog.data_len  = 0;
+  uart_app.data_prog_flag = false;
   uart_app.data_count = 0;
   uart_app.data_end_count = 0;
   memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart1, &uart_app.data_uart, 1);
+  HAL_UART_Receive_IT(&huart1, &data_uart, 1);
   /* USER CODE END 2 */
   BOOT_erase(APPLICATION_ADDRESS_PRO, APPLICATION_FLASH_LEN);
   UART_Trasnmit_Str("OK");
@@ -80,36 +97,79 @@ int boot_main(void)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+
 	if(huart->Instance == huart1.Instance)
 	{
-		if(uart_app.data_uart == DATA_END_LINE_UART)
+    if(uart_app.data_prog_flag == true)
+    {
+      UART_handle_revice_data(data_uart);
+    }
+    else
+    {
+        switch(data_uart)
+        {
+          case PC_DATA_PROG:
+              uart_app.data_prog_flag = true;
+              break;  
+
+          case PC_COMMAND_JUMP_APP:
+              BOOT_jump_app(APPLICATION_ADDRESS_PRO);
+              break;
+
+          default:
+              break;        
+        }
+    }
+
+		HAL_UART_Receive_IT(&huart1, &data_uart, 1);
+	}
+}
+
+void UART_handle_revice_data(uint8_t data_chr)
+{
+	uint8_t idx_data;
+	if(data_chr == DATA_END_LINE_UART)
+	{
+		uart_app.data_end_count++;
+		if(uart_app.data_end_count == DATA_END_LINE_UART_COUNT)
 		{
-			uart_app.data_end_count++;
-			if(uart_app.data_end_count == DATA_END_LINE_UART_COUNT)
+			uart_app.data_count = 0;
+			if(BOOT_check_data(uart_app.data_colectt) == BOOT_PROCESS_SUCCESS)
 			{
-				uart_app.data_count = 0;
-				if(BOOT_check_data(uart_app.data_colectt) == BOOT_PROCESS_SUCCESS)
-				{
-					BOOT_handle_data(uart_app.data_colectt, &data_prog);
-					BOOT_flash_prog(data_prog);
-					data_prog.add_flash = 0;
-					data_prog.data_len  = 0;
-					uart_app.data_count = 0;
-					uart_app.data_end_count = 0;
-					memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
-				}
-				else
-				{
-					UART_Trasnmit_Str("FAIL");
-					uart_app.data_count = 0;
-					uart_app.data_end_count = 0;
-					memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
-				}
+				BOOT_handle_data(uart_app.data_colectt, &data_prog);
+				BOOT_flash_prog(data_prog);
+				data_prog.add_flash = 0;
+				data_prog.data_len  = 0;
 			}
 			else
 			{
-
+				UART_Trasnmit_Str("FAIL");
 			}
+      uart_app.data_prog_flag = false;
+      uart_app.data_count = 0;
+      uart_app.data_end_count = 0;
+      memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
+		}
+	}
+	else
+	{
+		for(idx_data = 0; idx_data < uart_app.data_end_count; idx_data++)
+		{
+			uart_app.data_colectt[uart_app.data_count + idx_data] = DATA_END_LINE_UART;
+		}
+
+		uart_app.data_colectt[uart_app.data_count + uart_app.data_end_count] = data_chr;
+
+		uart_app.data_count = uart_app.data_count + uart_app.data_end_count + 1;
+		uart_app.data_end_count = 0;
+
+		if(uart_app.data_count > DATA_FILE_RAW_DATA_LEN + 4)
+		{
+			while(HAL_OK != UART_Trasnmit_Str("FAIL\n"));
+			uart_app.data_prog_flag = false;
+			uart_app.data_count = 0;
+			uart_app.data_end_count = 0;
+			memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
 		}
 	}
 }
@@ -211,13 +271,10 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 /*This function is handle jump to application process*/
-void UART_Trasnmit_Str(char *str)
+HAL_StatusTypeDef UART_Trasnmit_Str(char *str)
 {
-	while((*str) == 0)
-	{
-		HAL_UART_Transmit_IT(&huart1, (uint8_t *)str, 1);
-		str++;
-	}
+	uint16_t str_len = (uint16_t)strlen(str);
+	return (HAL_UART_Transmit_IT(&huart1, (uint8_t *)str, str_len));
 }
 /* USER CODE END 4 */
 

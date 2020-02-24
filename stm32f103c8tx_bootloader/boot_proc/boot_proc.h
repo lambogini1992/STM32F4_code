@@ -14,6 +14,10 @@
 #define APPLICATION_ADDRESS_PRO				0x8000000
 #define APPLICATION_FLASH_LEN				0x8000
 
+#define PC_COMMAND_DATA						0x01
+#define PC_DATA_PROG						0x02
+#define PC_COMMAND_JUMP_APP					0x03
+
 /* address flash	data length		data file			checksum data     end line
  *  4 byte			 1 byte	        256 byte				2 byte         4byte
  *  							(max length data)

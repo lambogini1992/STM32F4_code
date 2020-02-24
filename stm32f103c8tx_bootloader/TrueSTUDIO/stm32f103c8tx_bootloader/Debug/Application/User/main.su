@@ -1,5 +1,6 @@
-main.c:78:6:HAL_UART_RxCpltCallback	8	static
-main.c:99:6:SystemClock_Config	72	static
-main.c:33:5:boot_main	40	static
-main.c:193:6:UART_Trasnmit_Str	16	static
-main.c:207:6:Error_Handler	0	static
+main.c:180:6:SystemClock_Config	72	static
+main.c:274:19:UART_Trasnmit_Str	8	static
+main.c:128:6:UART_handle_revice_data	16	static
+main.c:98:6:HAL_UART_RxCpltCallback	8	static
+main.c:49:5:boot_main	40	static
+main.c:285:6:Error_Handler	0	static
