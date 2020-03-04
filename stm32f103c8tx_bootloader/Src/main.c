@@ -23,9 +23,9 @@ UART_HandleTypeDef huart1;
 typedef struct _data_uart_app_
 {
   bool data_prog_flag;
-	uint8_t data_end_count;
-	uint16_t data_count;
-	uint8_t data_colectt[DATA_FILE_RAW_DATA_LEN + 4];
+  uint8_t data_end_count;
+  uint16_t data_count;
+  uint8_t data_colectt[DATA_FILE_RAW_DATA_LEN + 4];
 }DATA_UART_APP;
 
 DATA_FILE data_prog;
@@ -51,7 +51,7 @@ int boot_main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-  
+
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -80,10 +80,18 @@ int boot_main(void)
   uart_app.data_end_count = 0;
   memset(uart_app.data_colectt, 0xFF, DATA_FILE_RAW_DATA_LEN + 4);
   /* USER CODE BEGIN 2 */
+  UART_Trasnmit_Str("MCU IS READY TO BOOT");
   HAL_UART_Receive_IT(&huart1, &data_uart, 1);
   /* USER CODE END 2 */
-  BOOT_erase(APPLICATION_ADDRESS_PRO, APPLICATION_FLASH_LEN);
-  UART_Trasnmit_Str("OK");
+  if(BOOT_erase(APPLICATION_ADDRESS_PRO, APPLICATION_FLASH_LEN) == HAL_OK)
+  {
+	  UART_Trasnmit_Str("MCU finish to prepare flash memory");
+  }
+  else
+  {
+	  UART_Trasnmit_Str("ERROR");
+	  return 0;
+  }
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -110,14 +118,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         {
           case PC_DATA_PROG:
               uart_app.data_prog_flag = true;
-              break;  
+              UART_Trasnmit_Str("OK");
+              break;
 
           case PC_COMMAND_JUMP_APP:
+        	  uart_app.data_prog_flag = false;
+        	  UART_Trasnmit_Str("OK");
               BOOT_jump_app(APPLICATION_ADDRESS_PRO);
               break;
 
           default:
-              break;        
+              break;
         }
     }
 
@@ -140,6 +151,7 @@ void UART_handle_revice_data(uint8_t data_chr)
 				BOOT_flash_prog(data_prog);
 				data_prog.add_flash = 0;
 				data_prog.data_len  = 0;
+				UART_Trasnmit_Str("OK");
 			}
 			else
 			{
@@ -165,7 +177,7 @@ void UART_handle_revice_data(uint8_t data_chr)
 
 		if(uart_app.data_count > DATA_FILE_RAW_DATA_LEN + 4)
 		{
-			while(HAL_OK != UART_Trasnmit_Str("FAIL\n"));
+			while(HAL_OK != UART_Trasnmit_Str("FAIL"));
 			uart_app.data_prog_flag = false;
 			uart_app.data_count = 0;
 			uart_app.data_end_count = 0;
@@ -308,3 +320,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
